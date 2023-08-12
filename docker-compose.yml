@@ -1,0 +1,61 @@
+version: '3'
+
+services:
+    php:
+        image: webdevops/php-nginx-dev:8.2
+        volumes:
+            - ./:/app
+            - ~/.ssh:/home/application/.ssh
+        working_dir: /app
+        environment:
+            WEB_DOCUMENT_ROOT: /app/public
+            WEB_DOCUMENT_INDEX: index.php
+            PHP_MAX_EXECUTION_TIME: 3600
+            PHP_DISPLAY_ERRORS: 1
+            COMPOSER_MEMORY_LIMIT: -1
+            DOMAIN_NAME: ${DOMAIN_NAME}
+            VIRTUAL_HOST: ${DOMAIN_NAME}
+            APPLICATION_UID: shell id -u
+            APPLICATION_GID: shell id -g
+            PHP_DEBUGGER: xdebug
+            XDEBUG_REMOTE_AUTOSTART: 1
+            COMPOSER_VERSION: 2
+        ports:
+            - "80:80"
+        depends_on:
+            - database
+            - nodejs
+        networks:
+            - appnet
+
+    database:
+        image: mysql:5.7
+        volumes:
+            - ./docker/mysql_database:/var/lib/mysql/
+        environment:
+            MYSQL_USER: ${MYSQL_USER}
+            MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+            MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+            MYSQL_DATABASE: ${MYSQL_DATABASE}
+        ports:
+            - "3307:3306"
+        networks:
+            - appnet
+
+    nodejs:
+        image: node:14-alpine
+        volumes:
+            - ./:/app
+        ports:
+            - "8080:8080"
+        working_dir: /app
+        networks:
+            - appnet
+
+networks:
+    appnet:
+        driver: "bridge"
+
+volumes:
+    mysql_data:
+        driver: "local"
