@@ -7,7 +7,7 @@
 /var/
 /vendor/
 ###< symfony/framework-bundle ###
-/docker/mysql_database/*
+/docker/data/*
 .idea
 /var
 /vendor

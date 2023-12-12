@@ -34,7 +34,7 @@ install:
 	make down
 	make build
 	make permissions
-	docker-compose exec --user=www-data php composer install
+	docker-compose exec --user=application php composer install
 	make drop-db
 	make create-db
 	make -i migration
@@ -46,8 +46,8 @@ permissions:
 
 database-permissions:
 	sudo chown 1000:www-data -R ./
-	sudo chown 1000:1000 -R docker/mysql_database/
-	sudo chmod 777 -R docker/mysql_database/
+	sudo chown 1000:1000 -R docker/data/
+	sudo chmod 777 -R docker/data/
 
 npm-v:
 	docker-compose run --rm nodejs npm -v
